@@ -1,7 +1,14 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
+
 const albums = require('./api/albums');
 const songs = require('./api/songs');
+const users = require('./api/users');
+const authentications = require('./api/authentications');
+const playlists = require('./api/playlists');
+const playlistActivities = require('./api/playlistActivities');
+const collaborations = require('./api/collaborations');
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -14,8 +21,33 @@ const init = async () => {
   });
 
   await server.register([
+    Jwt,
     albums,
     songs,
+    users,
+    authentications,
+  ]);
+
+  server.auth.strategy('openmusic_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.userId,
+      },
+    }),
+  });
+
+  await server.register([
+    playlists,
+    playlistActivities,
+    collaborations,
   ]);
 
   // Error handling
@@ -26,14 +58,6 @@ const init = async () => {
         status: 'fail',
         message: response.message,
       }).code(response.statusCode);
-    }
-
-    if (response instanceof Error) {
-      console.error(response);
-      return h.response({
-        status: 'error',
-        message: 'Terjadi kesalahan pada server kami',
-      }).code(500);
     }
 
     return h.continue;
