@@ -24,4 +24,31 @@ module.exports = (handler) => [
     path: '/albums/{id}',
     handler: handler.deleteAlbumById,
   },
+  {
+    method: 'POST',
+    path: '/albums/{id}/covers',
+    handler: handler.uploadCoverHandler,
+    options: {
+      payload: {
+        allow: 'multipart/form-data',
+        multipart: true,
+        output: 'stream',
+        maxBytes: 512000, // max 500KB
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/albums/{id}/likes',
+    handler: handler.postAlbumLikeHandler,
+    options: {
+      auth: 'openmusic_jwt',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/albums/{id}/likes',
+    handler: handler.getAlbumLikesHandler,
+  },
+
 ];

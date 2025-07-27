@@ -1,7 +1,8 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
-
+const Inert = require('@hapi/inert');
+const path = require('path');
 const albums = require('./api/albums');
 const songs = require('./api/songs');
 const users = require('./api/users');
@@ -9,6 +10,7 @@ const authentications = require('./api/authentications');
 const playlists = require('./api/playlists');
 const playlistActivities = require('./api/playlistActivities');
 const collaborations = require('./api/collaborations');
+const exports = require('./api/exports');
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -21,12 +23,19 @@ const init = async () => {
   });
 
   await server.register([
+    Inert,
     Jwt,
-    albums,
-    songs,
-    users,
-    authentications,
   ]);
+
+  server.route({
+    method: 'GET',
+    path: '/upload/images/{param*}',
+    handler: {
+      directory: {
+        path: path.resolve(__dirname, 'uploads/images'),
+      },
+    },
+  });
 
   server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
@@ -45,9 +54,14 @@ const init = async () => {
   });
 
   await server.register([
+    songs,
+    users,
+    authentications,
+    albums,
     playlists,
     playlistActivities,
     collaborations,
+    exports,
   ]);
 
   // Error handling

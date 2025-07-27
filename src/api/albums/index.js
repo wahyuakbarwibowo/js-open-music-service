@@ -2,13 +2,19 @@ const AlbumHandler = require('./handler');
 const routes = require('./routes');
 const AlbumsService = require('../../services/postgres/AlbumsService');
 const AlbumsValidator = require('../../validator/albums');
+const StorageService = require('../../services/storage/StorageService');
+const AlbumLikesService = require('../../services/postgres/AlbumLikesService');
+const CacheService = require('../../services/cache/CacheService');
 
 module.exports = {
   name: 'albums',
   version: '1.0.0',
   register: async (server) => {
     const service = new AlbumsService();
-    const handler = new AlbumHandler(service, AlbumsValidator);
+    const storageService = new StorageService();
+    const cacheService = new CacheService();
+    const albumLikesService = new AlbumLikesService(cacheService);
+    const handler = new AlbumHandler(service, AlbumsValidator, storageService, albumLikesService);
 
     server.route(routes(handler));
   },

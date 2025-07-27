@@ -1,17 +1,17 @@
 const routes = require('./routes');
-const CollaborationsHandler = require('./handler');
+const PlaylistsHandler = require('./handler');
 const validator = require('../../validator/collaborations');
-const CollaborationsService = require('../../services/postgres/CollaborationService');
 const PlaylistsService = require('../../services/postgres/PlaylistsService');
+const ProducerService = require('../../services/rabbitmq/ProducerService');
 
 module.exports = {
-  name: 'collaborations',
+  name: 'exports',
   version: '1.0.0',
   register: async (server) => {
-    const collaborationsService = new CollaborationsService();
     const playlistsService = new PlaylistsService();
-    const handler = new CollaborationsHandler(
-      collaborationsService,
+    const producerService = new ProducerService();
+    const handler = new PlaylistsHandler(
+      producerService,
       playlistsService,
       validator,
     );
