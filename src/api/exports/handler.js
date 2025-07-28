@@ -22,7 +22,7 @@ class ExportHandler {
     };
 
     // Kirim pesan ke RabbitMQ
-    await this._producerService.sendMessage('export:playlist', JSON.stringify(message));
+    await this._producerService.sendMessage('export:playlists', JSON.stringify(message));
 
     const response = h.response({
       status: 'success',
