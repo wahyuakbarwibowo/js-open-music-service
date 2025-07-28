@@ -1,9 +1,10 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const CacheService = require('../cache/CacheService');
 
 class AlbumLikesService {
-  constructor(cacheService) {
-    this._cacheService = cacheService;
+  constructor() {
+    this._cacheService = new CacheService();
     this._pool = new Pool();
   }
 

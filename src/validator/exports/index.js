@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const InvariantError = require('../../exceptions/InvariantError');
 
 const ExportPlaylistPayloadSchema = Joi.object({
   targetEmail: Joi.string().email().required(),
@@ -6,10 +7,8 @@ const ExportPlaylistPayloadSchema = Joi.object({
 
 const ExportValidator = {
   validateExportPlaylistPayload: (payload) => {
-    const validationResult = ExportPlaylistPayloadSchema.validate(payload);
-    if (validationResult.error) {
-      throw new Error(validationResult.error.message);
-    }
+    const result = ExportPlaylistPayloadSchema.validate(payload);
+    if (result.error) throw new InvariantError(result.error.message);
   },
 };
 

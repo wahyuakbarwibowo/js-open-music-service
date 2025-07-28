@@ -10,7 +10,7 @@ const authentications = require('./api/authentications');
 const playlists = require('./api/playlists');
 const playlistActivities = require('./api/playlistActivities');
 const collaborations = require('./api/collaborations');
-const exports = require('./api/exports');
+const exportApi = require('./api/exports');
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -61,7 +61,7 @@ const init = async () => {
     playlists,
     playlistActivities,
     collaborations,
-    exports,
+    exportApi,
   ]);
 
   // Error handling

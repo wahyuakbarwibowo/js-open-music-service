@@ -1,6 +1,6 @@
 const routes = require('./routes');
 const PlaylistsHandler = require('./handler');
-const validator = require('../../validator/collaborations');
+const validator = require('../../validator/exports');
 const PlaylistsService = require('../../services/postgres/PlaylistsService');
 const ProducerService = require('../../services/rabbitmq/ProducerService');
 
@@ -11,8 +11,8 @@ module.exports = {
     const playlistsService = new PlaylistsService();
     const producerService = new ProducerService();
     const handler = new PlaylistsHandler(
-      producerService,
       playlistsService,
+      producerService,
       validator,
     );
 

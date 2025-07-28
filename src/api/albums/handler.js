@@ -11,6 +11,8 @@ class AlbumHandler {
     this.putAlbumById = this.putAlbumById.bind(this);
     this.deleteAlbumById = this.deleteAlbumById.bind(this);
     this.uploadCoverHandler = this.uploadCoverHandler.bind(this);
+    this.postAlbumLikeHandler = this.postAlbumLikeHandler.bind(this);
+    this.getAlbumLikesHandler = this.getAlbumLikesHandler.bind(this);
   }
 
   async postAlbum(request, h) {
@@ -68,13 +70,13 @@ class AlbumHandler {
 
     this._validator.validateImageHeaders(cover.hapi.headers);
 
-    await this._albumsService.getAlbumById(id); // pastikan album ada
+    await this._service.getAlbumById(id); // pastikan album ada
 
     const filename = await this._storageService.writeFile(cover, cover.hapi);
 
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
 
-    await this._albumsService.updateAlbumCover(id, fileUrl);
+    await this._service.updateAlbumCover(id, fileUrl);
 
     const response = h.response({
       status: 'success',
