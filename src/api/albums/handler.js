@@ -107,7 +107,7 @@ class AlbumHandler {
     await this._albumLikesService.addUserLike(albumId, userId);
 
     // Hapus cache
-    await this._cacheService.delete(`album-likes:${albumId}`);
+    await this._cacheService.delete(`album_likes:${albumId}`);
 
     const response = h.response({
       status: 'success',
@@ -144,7 +144,7 @@ class AlbumHandler {
     await this._albumLikesService.removeUserLike(albumId, userId);
 
     // Hapus cache
-    await this._cacheService.delete(`album-likes:${albumId}`);
+    await this._cacheService.delete(`album_likes:${albumId}`);
 
     return {
       status: 'success',
