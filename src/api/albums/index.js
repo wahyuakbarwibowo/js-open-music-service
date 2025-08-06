@@ -4,6 +4,7 @@ const AlbumsService = require('../../services/postgres/AlbumsService');
 const validator = require('../../validator/albums');
 const StorageService = require('../../services/storage/StorageService');
 const AlbumLikesService = require('../../services/postgres/AlbumLikesService');
+const CacheService = require('../../services/cache/CacheService');
 
 module.exports = {
   name: 'albums',
@@ -12,11 +13,13 @@ module.exports = {
     const service = new AlbumsService();
     const storageService = new StorageService();
     const albumLikesService = new AlbumLikesService();
+    const cacheService = new CacheService();
     const handler = new AlbumHandler(
       service,
       validator,
       storageService,
       albumLikesService,
+      cacheService,
     );
 
     server.route(routes(handler));

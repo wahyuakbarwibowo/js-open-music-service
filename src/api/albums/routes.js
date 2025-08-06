@@ -41,9 +41,13 @@ module.exports = (handler) => [
     method: 'POST',
     path: '/albums/{id}/likes',
     handler: handler.postAlbumLikeHandler,
-    options: {
-      auth: 'openmusic_jwt',
-    },
+    options: { auth: 'openmusic_jwt' },
+  },
+  {
+    method: 'DELETE',
+    path: '/albums/{id}/likes',
+    handler: handler.deleteAlbumLikeHandler,
+    options: { auth: 'openmusic_jwt' },
   },
   {
     method: 'GET',

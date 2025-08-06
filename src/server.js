@@ -74,6 +74,10 @@ const init = async () => {
       }).code(response.statusCode);
     }
 
+    if (response instanceof Error) {
+      console.log(response);
+    }
+
     return h.continue;
   });
 

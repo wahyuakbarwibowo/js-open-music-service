@@ -51,6 +51,29 @@ class AlbumLikesService {
       return { count, fromCache: false };
     }
   }
+
+  async isUserAlreadyLiked(albumId, userId) {
+    const result = await this._pool.query(
+      'SELECT 1 FROM user_album_likes WHERE album_id = $1 AND user_id = $2',
+      [albumId, userId],
+    );
+    return result.rowCount > 0;
+  }
+
+  async addUserLike(albumId, userId) {
+    const id = `like-${nanoid(16)}`;
+    await this._pool.query(
+      'INSERT INTO user_album_likes (id, user_id, album_id) VALUES ($1, $2, $3)',
+      [id, userId, albumId],
+    );
+  }
+
+  async removeUserLike(albumId, userId) {
+    await this._pool.query(
+      'DELETE FROM user_album_likes WHERE album_id = $1 AND user_id = $2',
+      [albumId, userId],
+    );
+  }
 }
 
 module.exports = AlbumLikesService;
