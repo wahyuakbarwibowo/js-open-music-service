@@ -1,0 +1,5 @@
+# abaikan semua file di folder ini
+*
+
+# tapi jangan abaikan file .gitignore
+!.gitignore

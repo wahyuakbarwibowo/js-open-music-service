@@ -1,3 +1,4 @@
+const path = require('path');
 const AlbumHandler = require('./handler');
 const routes = require('./routes');
 const AlbumsService = require('../../services/postgres/AlbumsService');
@@ -11,7 +12,7 @@ module.exports = {
   version: '1.0.0',
   register: async (server) => {
     const service = new AlbumsService();
-    const storageService = new StorageService();
+    const storageService = new StorageService(path.resolve(__dirname, '../../../uploads'));
     const albumLikesService = new AlbumLikesService();
     const cacheService = new CacheService();
     const handler = new AlbumHandler(

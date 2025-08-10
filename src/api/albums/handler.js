@@ -1,3 +1,5 @@
+const Path = require('path');
+const { nanoid } = require('nanoid');
 const ClientError = require('../../exceptions/ClientError');
 
 class AlbumHandler {
@@ -69,17 +71,24 @@ class AlbumHandler {
   }
 
   async uploadCoverHandler(request, h) {
-    const { cover } = request.payload;
     const { id } = request.params;
+    const { cover } = request.payload;
 
-    this._validator.validateImageHeaders(cover.hapi.headers);
+    if (!cover || !cover.hapi || !cover.hapi.filename) {
+      return h.response({ status: 'fail', message: 'File cover tidak ada' }).code(400);
+    }
 
-    await this._service.getAlbumById(id); // pastikan album ada
+    const allowedMime = ['image/jpeg', 'image/png'];
+    if (!allowedMime.includes(cover.hapi.headers['content-type'])) {
+      return h.response({ status: 'fail', message: 'Tipe file harus jpg/png' }).code(400);
+    }
 
-    const filename = await this._storageService.writeFile(cover, cover.hapi);
+    const filename = `${nanoid(16)}${Path.extname(cover.hapi.filename)}`;
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+    // Simpan ke filesystem
+    await this._storageService.writeFile(cover, filename);
 
+    const fileUrl = `http://${process.env.HOST}:${process.env.PORT}/uploads/${filename}`;
     await this._service.updateAlbumCover(id, fileUrl);
 
     const response = h.response({

@@ -1,39 +1,24 @@
-const AWS = require('aws-sdk');
+// src/services/storage/StorageService.js
+const path = require('path');
+const fs = require('fs');
 
 class StorageService {
-  constructor() {
-    this._s3 = new AWS.S3({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: process.env.AWS_REGION,
-    });
+  constructor(folder) {
+    this._folder = folder;
 
-    this._bucketName = process.env.AWS_BUCKET_NAME;
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true });
+    }
   }
 
-  async writeFile(file, meta) {
-    const filename = `${+new Date()}-${meta.filename}`;
+  writeFile(file, filename) {
+    const filepath = path.join(this._folder, filename);
+    const fileStream = fs.createWriteStream(filepath);
 
-    const buffer = await this._streamToBuffer(file);
-
-    const params = {
-      Bucket: this._bucketName,
-      Key: filename,
-      Body: buffer,
-      ContentType: meta.headers['content-type'],
-    };
-
-    await this._s3.upload(params).promise();
-
-    return filename;
-  }
-
-  _streamToBuffer(stream) {
     return new Promise((resolve, reject) => {
-      const chunks = [];
-      stream.on('data', (chunk) => chunks.push(chunk));
-      stream.on('end', () => resolve(Buffer.concat(chunks)));
-      stream.on('error', reject);
+      file.pipe(fileStream);
+      file.on('end', () => resolve(filename));
+      file.on('error', reject);
     });
   }
 }

@@ -27,16 +27,6 @@ const init = async () => {
     Jwt,
   ]);
 
-  server.route({
-    method: 'GET',
-    path: '/upload/images/{param*}',
-    handler: {
-      directory: {
-        path: path.resolve(__dirname, 'uploads/images'),
-      },
-    },
-  });
-
   server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
@@ -64,6 +54,16 @@ const init = async () => {
     exportApi,
   ]);
 
+  server.route({
+    method: 'GET',
+    path: '/uploads/{param*}',
+    handler: {
+      directory: {
+        path: path.resolve(__dirname, '../uploads'),
+      },
+    },
+  });
+
   // Error handling
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
@@ -72,10 +72,6 @@ const init = async () => {
         status: 'fail',
         message: response.message,
       }).code(response.statusCode);
-    }
-
-    if (response instanceof Error) {
-      console.log(response);
     }
 
     return h.continue;
